@@ -4,6 +4,11 @@
 // defined here. Semantic analysis methods, optimization methods, and code
 // generation are handled by other modules. This keeps the compiler organized
 // by phase.
+//
+// The program node has a custom inspect method, so you can just console.log
+// the root node and you'll get a lovely formatted string with details on the
+// entire AST. It even works well if you analyze the AST and turn it into a
+// graph with cycles.
 
 import util from "util"
 
@@ -39,6 +44,7 @@ export class BinaryExpression {
     Object.assign(this, { op, left, right })
   }
 }
+
 export class UnaryExpression {
   constructor(op, operand) {
     Object.assign(this, { op, operand })
