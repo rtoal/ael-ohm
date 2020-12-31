@@ -5,7 +5,7 @@
 // generation are handled by other modules. This keeps the compiler organized
 // by phase.
 //
-// The program node has a custom inspect method, so you can just console.log
+// The root (Program) node has a custom inspect method, so you can console.log
 // the root node and you'll get a lovely formatted string with details on the
 // entire AST. It even works well if you analyze the AST and turn it into a
 // graph with cycles.
@@ -74,26 +74,26 @@ function text(node) {
   function subtree_text(node, prefix, indent) {
     seen.set(node, ++nodeId)
     let descriptor = `${" ".repeat(indent)}${prefix}: ${node.constructor.name}`
-    let [simple_attributes, complex_attributes] = ["", []]
-    for (const [attribute, child] of Object.entries(node)) {
+    let [simple_props, complex_props] = ["", []]
+    for (const [prop, child] of Object.entries(node)) {
       if (seen.has(child)) {
-        simple_attributes += ` ${attribute}=${seen.get(child)}`
+        simple_props += ` ${prop}=${seen.get(child)}`
       } else if (Array.isArray(child) || (child && typeof child == "object")) {
-        complex_attributes.push([attribute, child])
+        complex_props.push([prop, child])
       } else {
-        simple_attributes += ` ${attribute}=${util.inspect(child)}`
+        simple_props += ` ${prop}=${util.inspect(child)}`
       }
     }
     lines.push(
-      `${String(nodeId).padStart(4, " ")} | ${descriptor}${simple_attributes}`
+      `${String(nodeId).padStart(4, " ")} | ${descriptor}${simple_props}`
     )
-    for (let [attribute, child] of complex_attributes) {
+    for (let [prop, child] of complex_props) {
       if (Array.isArray(child)) {
         for (let [index, node] of child.entries()) {
-          subtree_text(node, `${attribute}[${index}]`, indent + 2)
+          subtree_text(node, `${prop}[${index}]`, indent + 2)
         }
       } else {
-        subtree_text(child, attribute, indent + 2)
+        subtree_text(child, prop, indent + 2)
       }
     }
   }

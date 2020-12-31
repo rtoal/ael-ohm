@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-import fs from "fs"
+import fs from "fs/promises"
 import process from "process"
 import compile from "./compiler.js"
 
@@ -22,12 +22,13 @@ Prints to stdout according to <output_type>, which must be one of:
 if (process.argv.length !== 4) {
   console.log(help)
 } else {
-  fs.readFile(process.argv[2], (error, data) => {
-    if (error) {
+  ;(async () => {
+    try {
+      const buffer = await fs.readFile(process.argv[2])
+    } catch (e) {
       console.error("File cannot be read")
-    } else {
-      let output = compile(data.toString(), process.argv[3])
-      console.log(output)
+      process.exit(1)
     }
-  })
+    console.log(compile(buffer.toString(), process.argv[3]))
+  })()
 }
