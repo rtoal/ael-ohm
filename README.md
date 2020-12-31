@@ -81,4 +81,4 @@ You can run tests with:
 npm test
 ```
 
-This project is so small that `npm test` is configured to always run a coverage report. I used `mocha` for the test runner and `c8` for the coverage. (It was too hard to get Jest working without Babel.)
+This project is so small that `npm test` is configured to always run a coverage report. I used [mocha](https://mochajs.org/) for the test runner and [c8](https://github.com/bcoe/c8) for the coverage. (It was too hard to get Jest working without Babel.)
