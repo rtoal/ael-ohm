@@ -1,0 +1,5 @@
+// Has all syntactic forms
+let dog = 5 * 9
+dog = dog + (2 - 80) / -8999.235
+let ラット = abs (dog - 5)
+print -ラット / sqrt dog + ラット

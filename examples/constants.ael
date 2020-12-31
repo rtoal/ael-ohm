@@ -1,0 +1,3 @@
+// Fun for testing constant folding
+print -5
+print 8 * 10 + 200 / 5
