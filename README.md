@@ -76,5 +76,7 @@ I’m happy to take PRs. As usual, be nice when filing issues and contributing. 
 When developing, you can run tests with:
 
 ```
-coverage run --source ael -m pytest tests && coverage report -m
+npm test
 ```
+
+This project is so small that `npm test` is configured to always run a coverage report.
