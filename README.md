@@ -2,11 +2,11 @@
 
 # Ael
 
-This is a compiler for the language **Ael** written with the help of the amazing Ohm language library.
+This is a compiler for the language **Ael** written with the help of the amazing [Ohm language library](https://ohmlang.github.io/).
 
-Ael stands for (A)rithmetic (E)xpression (L)anguage. It’s the language of arithmetic expressions with `+`, `-`, `*`, `/`, `abs`, `sqrt`, and parentheses, together with declarations, assignments, and print statements. The idea is to give the language _just enough_ to (1) illustrate the difference between statements and expressions, (2) have something to do during semantic analysis, and (3) allow for more than one optimization.
+Ael stands for (A)rithmetic (E)xpression (L)anguage. It’s the language of arithmetic expressions with `+`, `-`, `*`, `/`, `abs`, `sqrt`, and parentheses, together with declarations, assignments, and print statements. The language wants to be _just simple enough_ for the compiler writer to (1) experience the difference between statements and expressions, (2) have something to do during semantic analysis, and (3) provide a handful of optimization opportunities.
 
-In the spirit of an introductory tutorial, this compiler features multiple backends: it can generate JavaScript, C, and LLVM. Why not assembly? Well, LLVM these days takes things plenty far enough along for an introductory example.
+In the spirit of an introductory tutorial, this compiler features multiple backends: it can generate JavaScript, C, and LLVM. Why not a real assembly language? It’s fair to say LLVM these days takes things plenty far enough along for an introductory example. One can learn about register allocation and hardware-specific optimizations elsewhere.
 
 ## Sample Program
 
@@ -49,7 +49,7 @@ Here is the grammar in Ohm notation:
 
 ## Running
 
-The compiler is written in modern Python. You will need version 3.8 or above.
+The compiler is written in modern JavaScript.
 
 Because this application was written as a tutorial, the compiler exposes what each phase does, as well as providing multiple translations:
 
@@ -73,10 +73,12 @@ To keep things simple, the compiler will halt on the first error it finds.
 
 I’m happy to take PRs. As usual, be nice when filing issues and contributing. Do remember the idea is to keep the language tiny; if you’d like to extend the language, you’re probably better forking into a new project. However, I would _love_ to see any improvements you might have for the implementation or the pedagogy.
 
-When developing, you can run tests with:
+To contribute, make sure you have a modern version of Node.js, since the code has some ES2020 features. Clone the repo and run `npm install` as usual.
+
+You can run tests with:
 
 ```
 npm test
 ```
 
-This project is so small that `npm test` is configured to always run a coverage report.
+This project is so small that `npm test` is configured to always run a coverage report. I used `mocha` for the test runner and `c8` for the coverage. (It was too hard to get Jest working without Babel.)
