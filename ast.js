@@ -77,7 +77,7 @@ function text(node) {
     let [simple_props, complex_props] = ["", []]
     for (const [prop, child] of Object.entries(node)) {
       if (seen.has(child)) {
-        simple_props += ` ${prop}=${seen.get(child)}`
+        simple_props += ` ${prop}=$${seen.get(child)}`
       } else if (Array.isArray(child) || (child && typeof child == "object")) {
         complex_props.push([prop, child])
       } else {

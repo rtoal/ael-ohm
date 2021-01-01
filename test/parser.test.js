@@ -42,15 +42,3 @@ describe("The parser", () => {
     })
   }
 })
-
-// @pytest.mark.parametrize("source, bad", [
-//     ("print 5 -", r"Expected id, number, unary operator, or '\('"),
-//     ("print 7 * ((2 _ 3)", r"Expected '\)'"),
-//     ("print )", r"Expected id, number, unary operator, or '\('"),
-//     ("x * 5", r"Expected '='"),
-//     ("print 5\nx * 5", r"Expected '='"),
-//     ("print 5\n) * 5", r"Statement expected"),
-//     ("let x = * 71", r"Expected id, number, unary operator, or '\('")])
-// def test_parser_can_detect_lots_of_errors(source, bad):
-//     with pytest.raises(Exception, match=bad):
-//         parse(source)

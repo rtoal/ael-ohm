@@ -22,13 +22,11 @@ Prints to stdout according to <output_type>, which must be one of:
 if (process.argv.length !== 4) {
   console.log(help)
 } else {
-  ;(async () => {
-    try {
-      const buffer = await fs.readFile(process.argv[2])
-    } catch (e) {
+  fs.readFile(process.argv[2])
+    .then(buffer => {
+      console.log(compile(buffer.toString(), process.argv[3]))
+    })
+    .catch(e => {
       console.error("File cannot be read")
-      process.exit(1)
-    }
-    console.log(compile(buffer.toString(), process.argv[3]))
-  })()
+    })
 }
