@@ -28,7 +28,7 @@ if (process.argv.length !== 4) {
       console.log(compile(buffer.toString(), process.argv[3]))
     } catch (e) {
       console.error(`${e}`)
-      process.exit(1)
+      process.exitCode = 1
     }
   })()
 }

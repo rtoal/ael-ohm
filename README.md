@@ -59,7 +59,6 @@ Because this application was written as a tutorial, the compiler exposes what ea
 
 The output type argument tells the compiler what to print to standard output:
 
-- `tokens` &nbsp;&nbsp; the token sequence
 - `ast` &nbsp;&nbsp; the abstract syntax tree
 - `analyzed` &nbsp;&nbsp; the semantically analyzed representation
 - `optimized` &nbsp;&nbsp; the optimized semantically analyzed representation
