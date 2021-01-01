@@ -2,15 +2,14 @@
 //
 // Invoke generate(program) with the program node to get back the JavaScript
 // translation as a string.
-//
-// Variable names in JavaScript will be suffixed with _1, _2, _3, etc. This
-// is because "while", for example, is a legal variable name in Ael, but not
-// in JavaScript. So we want to generate something like "while_1".
 
 export default function generate(program) {
   const output = []
   let targetNames = new Map()
 
+  // Variable names in JavaScript will be suffixed with _1, _2, _3, etc. This
+  // is because "while", for example, is a legal variable name in Ael, but not
+  // in JavaScript. So we want to generate something like "while_1".
   function targetName(declaration) {
     if (!targetNames.has(declaration)) {
       targetNames.set(declaration, targetNames.size + 1)

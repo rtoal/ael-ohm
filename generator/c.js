@@ -1,16 +1,18 @@
 // Code Generator Ael -> C
 //
-// Invoke generate(program) with the program node to get back the C translation
-// as a string.
+// Invoke generate(program) with the program node to get back the C
+// translation as a string.
 
 export default function generate(program) {
   const output = []
   let targetNames = new Map()
-  let nextSuffix = 1
 
+  // Variable names in C will be suffixed with _1, _2, _3, etc. This is
+  // because "while", for example, is a legal variable name in Ael, but
+  // not in C. So we want to generate something like "while_1".
   function targetName(declaration) {
     if (!targetNames.has(declaration)) {
-      targetNames.set(declaration, nextSuffix++)
+      targetNames.set(declaration, targetNames.size + 1)
     }
     return `${declaration.name}_${targetNames.get(declaration)}`
   }
@@ -18,39 +20,37 @@ export default function generate(program) {
   const gen = node => generators[node.constructor.name](node)
 
   const generators = {
-    Program(self) {
+    Program(p) {
       output.push("#include <stdio.h>")
       output.push("#include <math.h>")
       output.push("int main() {")
-      for (const s of self.statements) {
-        gen(s)
-      }
+      p.statements.forEach(gen)
       output.push("return 0;")
       output.push("}")
     },
-    Declaration(self) {
-      output.push(`double ${targetName(self)} = ${gen(self.initializer)};`)
+    Declaration(d) {
+      output.push(`double ${targetName(d)} = ${gen(d.initializer)};`)
     },
-    Assignment(self) {
-      const source = gen(self.source)
-      const target = gen(self.target)
+    Assignment(s) {
+      const source = gen(s.source)
+      const target = gen(s.target)
       output.push(`${target} = ${source};`)
     },
-    PrintStatement(self) {
-      output.push(`printf("%g\\n", ${gen(self.expression)});`)
+    PrintStatement(s) {
+      output.push(`printf("%g\\n", ${gen(s.expression)});`)
     },
-    BinaryExpression(self) {
-      return `(${gen(self.left)} ${self.op} ${gen(self.right)})`
+    BinaryExpression(e) {
+      return `(${gen(e.left)} ${e.op} ${gen(e.right)})`
     },
-    UnaryExpression(self) {
-      const op = { abs: "fabs" }[self.op] ?? self.op
-      return `${op}(${gen(self.operand)})`
+    UnaryExpression(e) {
+      const op = { abs: "fabs" }[e.op] ?? e.op
+      return `${op}(${gen(e.operand)})`
     },
-    IdentifierExpression(self) {
-      return targetName(self.ref)
+    IdentifierExpression(e) {
+      return targetName(e.ref)
     },
-    LiteralExpression(self) {
-      return self.value
+    LiteralExpression(e) {
+      return e.value
     },
   }
 

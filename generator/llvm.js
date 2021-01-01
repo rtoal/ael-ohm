@@ -6,71 +6,72 @@
 
 export default function generate(program) {
   const output = []
-  let llvmRegisters = new Map()
-  let nextRegister = -1
+  let registerFor = new Map()
+  let nextRegister = 0
 
-  const allocateRegister = () => `%${++nextRegister}`
+  // LLVM local registers are named %0, $1, %2, ...
+  const allocateRegister = () => `%${nextRegister++}`
 
   const gen = node => generators[node.constructor.name](node)
 
   const generators = {
-    Program(self) {
+    Program(p) {
       output.push('@format = private constant [3 x i8] c"%g\\0A"')
       output.push("declare i64 @printf(i8*, ...)")
       output.push("declare double @llvm.fabs(double)")
       output.push("declare double @llvm.sqrt.f64(double)")
       output.push("define i64 @main() {")
       output.push("entry:")
-      self.statements.forEach(gen)
+      p.statements.forEach(gen)
       output.push("ret i64 0")
       output.push("}")
     },
-    Declaration(self) {
+    Declaration(d) {
       // Ael is such a boring language; since there are no loops or
-      // conditions, Ael variables just map to the generated LLVM ones,
-      // so it's frighteningly trivial.
-      llvmRegisters[self] = gen(self.initializer)
+      // conditions, Ael variables just map to the generated LLVM
+      // registers, so it's frighteningly trivial.
+      registerFor[d] = gen(d.initializer)
     },
-    Assignment(self) {
+    Assignment(s) {
       // There’s no difference between declarations and assignments here;
       // by this time in the complier, we’ve already checked that
       // assignments refer to already-declared Ael variables. So
       // whatever got computed on the right hand side is what this
       // variable will reference form now on.
-      llvmRegisters[self.target.ref] = gen(self.source)
+      registerFor[s.target.ref] = gen(s.source)
     },
-    PrintStatement(self) {
+    PrintStatement(s) {
       const format =
         "i8* getelementptr inbounds ([3 x i8], [3 x i8]* @format, i64 0, i64 0)"
-      const operand = `double ${gen(self.expression)}`
+      const operand = `double ${gen(s.expression)}`
       output.push(`call i64 (i8*, ...) @printf(${format}, ${operand})`)
     },
-    BinaryExpression(self) {
-      const op = { "+": "fadd", "-": "fsub", "*": "fmul", "/": "fdiv" }[self.op]
-      const left = gen(self.left)
-      const right = gen(self.right)
+    BinaryExpression(e) {
+      const op = { "+": "fadd", "-": "fsub", "*": "fmul", "/": "fdiv" }[e.op]
+      const left = gen(e.left)
+      const right = gen(e.right)
       const target = allocateRegister()
       output.push(`${target} = ${op} double ${left}, ${right}`)
       return target
     },
-    UnaryExpression(self) {
-      const operand = gen(self.operand)
+    UnaryExpression(e) {
+      const operand = gen(e.operand)
       const source =
-        self.op == "-"
+        e.op == "-"
           ? `fneg double ${operand}`
-          : self.op == "abs"
+          : e.op == "abs"
           ? `call double @llvm.fabs(double ${operand})`
           : `call double @llvm.sqrt.f64(double ${operand})`
       const target = allocateRegister()
       output.push(`${target} = ${source}`)
       return target
     },
-    IdentifierExpression(self) {
-      return llvmRegisters[self.ref]
+    IdentifierExpression(e) {
+      return registerFor[e.ref]
     },
-    LiteralExpression(self) {
+    LiteralExpression(e) {
       // LLVM is very picky about its float literals!
-      return `${self.value}${Number.isInteger(self.value) ? ".0" : ""}`
+      return `${e.value}${Number.isInteger(e.value) ? ".0" : ""}`
     },
   }
 
