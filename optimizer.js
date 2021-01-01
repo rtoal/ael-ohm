@@ -1,6 +1,6 @@
 // Optimizer
 //
-// This module exports a single funciton to perform machine independent
+// This module exports a single funciton to perform machine-independent
 // optimizations on the analyzed semantic graph.
 //
 // The only optimizations supported here are:
@@ -20,85 +20,85 @@ export default function optimize(node) {
 }
 
 const optimizers = {
-  Program(self) {
-    self.statements = self.statements.map(optimize).filter(s => s !== null)
-    return self
+  Program(p) {
+    p.statements = p.statements.map(optimize).filter(s => s !== null)
+    return p
   },
-  Declaration(self) {
-    self.initializer = optimize(self.initializer)
-    return self
+  Declaration(d) {
+    d.initializer = optimize(d.initializer)
+    return d
   },
-  Assignment(self) {
-    self.source = optimize(self.source)
-    self.target = optimize(self.target)
-    if (self.target.constructor == IdentifierExpression) {
-      if (self.source.ref === self.target.ref) {
+  Assignment(s) {
+    s.source = optimize(s.source)
+    s.target = optimize(s.target)
+    if (s.target.constructor == IdentifierExpression) {
+      if (s.source.ref === s.target.ref) {
         return null
       }
     }
-    return self
+    return s
   },
-  PrintStatement(self) {
-    self.expression = optimize(self.expression)
-    return self
+  PrintStatement(s) {
+    s.expression = optimize(s.expression)
+    return s
   },
-  BinaryExpression(self) {
-    self.left = optimize(self.left)
-    self.right = optimize(self.right)
-    if (self.left.constructor === LiteralExpression) {
-      const x = self.left.value
-      if (self.right.constructor === LiteralExpression) {
-        const y = self.right.value
-        if (self.op == "+") {
+  BinaryExpression(e) {
+    e.left = optimize(e.left)
+    e.right = optimize(e.right)
+    if (e.left.constructor === LiteralExpression) {
+      const x = e.left.value
+      if (e.right.constructor === LiteralExpression) {
+        const y = e.right.value
+        if (e.op == "+") {
           return new LiteralExpression(x + y)
-        } else if (self.op == "-") {
+        } else if (e.op == "-") {
           return new LiteralExpression(x - y)
-        } else if (self.op == "*") {
+        } else if (e.op == "*") {
           return new LiteralExpression(x * y)
-        } else if (self.op == "/") {
+        } else if (e.op == "/") {
           return new LiteralExpression(x / y)
         }
-      } else if (x === 0 && self.op === "+") {
-        return self.right
-      } else if (x === 1 && self.op === "*") {
-        return self.right
-      } else if (x === 0 && self.op === "-") {
-        return new UnaryExpression("-", self.right)
-      } else if (x === 0 && self.op === "*") {
+      } else if (x === 0 && e.op === "+") {
+        return e.right
+      } else if (x === 1 && e.op === "*") {
+        return e.right
+      } else if (x === 0 && e.op === "-") {
+        return new UnaryExpression("-", e.right)
+      } else if (x === 0 && e.op === "*") {
         return new LiteralExpression(0)
-      } else if (x === 0 && self.op === "/") {
+      } else if (x === 0 && e.op === "/") {
         return new LiteralExpression(0)
       }
-    } else if (self.right.constructor === LiteralExpression) {
-      const y = self.right.value
-      if (["+", "-"].includes(self.op) && y === 0) {
-        return self.left
-      } else if (["*", "/"].includes(self.op) && y === 1) {
-        return self.left
-      } else if (self.op === "*" && y === 0) {
+    } else if (e.right.constructor === LiteralExpression) {
+      const y = e.right.value
+      if (["+", "-"].includes(e.op) && y === 0) {
+        return e.left
+      } else if (["*", "/"].includes(e.op) && y === 1) {
+        return e.left
+      } else if (e.op === "*" && y === 0) {
         return new LiteralExpression(0)
       }
     }
-    return self
+    return e
   },
-  UnaryExpression(self) {
-    self.operand = optimize(self.operand)
-    if (self.operand.constructor === LiteralExpression) {
-      const x = self.operand.value
-      if (self.op === "-") {
+  UnaryExpression(e) {
+    e.operand = optimize(e.operand)
+    if (e.operand.constructor === LiteralExpression) {
+      const x = e.operand.value
+      if (e.op === "-") {
         return new LiteralExpression(-x)
-      } else if (self.op === "abs") {
+      } else if (e.op === "abs") {
         return new LiteralExpression(Math.abs(x))
-      } else if (self.op === "sqrt") {
+      } else if (e.op === "sqrt") {
         return new LiteralExpression(Math.sqrt(x))
       }
     }
-    return self
+    return e
   },
-  IdentifierExpression(self) {
-    return self
+  IdentifierExpression(e) {
+    return e
   },
-  LiteralExpression(self) {
-    return self
+  LiteralExpression(e) {
+    return e
   },
 }
