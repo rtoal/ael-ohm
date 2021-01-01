@@ -4,25 +4,18 @@
 // translation as a string.
 
 export default function generate(program) {
-  const lines = []
+  const output = []
   let targetNames = new Map()
   let nextSuffix = 1
 
   function targetName(declaration) {
     if (!targetNames.has(declaration)) {
-      targetNames.set(declaration, nextSuffix)
-      nextSuffix += 1
+      targetNames.set(declaration, nextSuffix++)
     }
     return `${declaration.name}_${targetNames.get(declaration)}`
   }
 
-  function gen(node) {
-    return generators[node.constructor.name](node)
-  }
-
-  function emit(line) {
-    lines.push(line)
-  }
+  const gen = node => generators[node.constructor.name](node)
 
   const generators = {
     Program(self) {
@@ -31,15 +24,15 @@ export default function generate(program) {
       }
     },
     Declaration(self) {
-      emit(`let ${targetName(self)} = ${gen(self.initializer)};`)
+      output.push(`let ${targetName(self)} = ${gen(self.initializer)};`)
     },
     Assignment(self) {
-      self.source = gen(self.source)
-      self.target = gen(self.target)
-      emit(`${self.target} = ${self.source};`)
+      const source = gen(self.source)
+      const target = gen(self.target)
+      output.push(`${target} = ${source};`)
     },
     PrintStatement(self) {
-      emit(`console.log(${gen(self.expression)});`)
+      output.push(`console.log(${gen(self.expression)});`)
     },
     BinaryExpression(self) {
       return `(${gen(self.left)} ${self.op} ${gen(self.right)})`
@@ -57,5 +50,5 @@ export default function generate(program) {
   }
 
   gen(program)
-  return lines.join("\n")
+  return output.join("\n")
 }
