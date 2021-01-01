@@ -3,7 +3,7 @@ import { LiteralExpression, PrintStatement, Program } from "../ast.js"
 import compile from "../compiler.js"
 
 describe("The compiler", () => {
-  it("says Unknown output type when the output type is unknown", done => {
+  it("says 'Unknown output type' when the output type is unknown", done => {
     assert.strictEqual(compile("print 0", "blah"), "Unknown output type")
     done()
   })
