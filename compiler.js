@@ -27,7 +27,7 @@ export default function compile(source, outputType) {
   } else if (outputType == "optimized") {
     return optimize(analyze(parse(source)))
   } else if (["js", "c", "llvm"].includes(outputType)) {
-    return generate[outputType](optimize(analyze(parse(source))))
+    return generate(outputType)(optimize(analyze(parse(source))))
   } else {
     return "Unknown output type"
   }

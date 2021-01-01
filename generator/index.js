@@ -1,12 +1,7 @@
-// import ael.generator.js as js
-// import ael.generator.c as c
-// import ael.generator.llvm as llvm
+import js from "./js.js"
+import c from "./c.js"
+import llvm from "./llvm.js"
 
-// generate = {
-//     'js': js.generate,
-//     'c': c.generate,
-//     'llvm': llvm.generate}
-
-export default function generate(program) {
-  return null
+export default function generate(type) {
+  return { js, c, llvm }[type]
 }

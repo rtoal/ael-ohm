@@ -1,57 +1,61 @@
-// """Code Generator Ael -> JavaScript
-
+// Code Generator Ael -> JavaScript
+//
 // Invoke generate(program) with the program node to get back the JavaScript
 // translation as a string.
-// """
 
-// from io import StringIO
-// from ast import *
+export default function generate(program) {
+  const lines = []
+  let targetNames = new Map()
+  let nextSuffix = 1
 
-// def generate(program):
-//     buffer = StringIO()
-//     target_names = {}
-//     next_suffix = 1
+  function targetName(declaration) {
+    if (!targetNames.has(declaration)) {
+      targetNames.set(declaration, nextSuffix)
+      nextSuffix += 1
+    }
+    return `${declaration.name}_${targetNames.get(declaration)}`
+  }
 
-//     def target_name(declaration):
-//         nonlocal next_suffix
-//         if declaration not in target_names:
-//             target_names[declaration] = next_suffix
-//             next_suffix += 1
-//         return f"{declaration.name}_{target_names[declaration]}"
+  function gen(node) {
+    return generators[node.constructor.name](node)
+  }
 
-//     def generate(node):
-//         def emit(line):
-//             print(line, file=buffer)
+  function emit(line) {
+    lines.push(line)
+  }
 
-//         def generateProgram(self):
-//             for s in self.statements:
-//                 generate(s)
+  const generators = {
+    Program(self) {
+      for (const s of self.statements) {
+        gen(s)
+      }
+    },
+    Declaration(self) {
+      emit(`let ${targetName(self)} = ${gen(self.initializer)};`)
+    },
+    Assignment(self) {
+      self.source = gen(self.source)
+      self.target = gen(self.target)
+      emit(`${self.target} = ${self.source};`)
+    },
+    PrintStatement(self) {
+      emit(`console.log(${gen(self.expression)});`)
+    },
+    BinaryExpression(self) {
+      return `(${gen(self.left)} ${self.op} ${gen(self.right)})`
+    },
+    UnaryExpression(self) {
+      const op = { abs: "Math.abs", sqrt: "Math.sqrt" }[self.op] ?? self.op
+      return `${op}(${gen(self.operand)})`
+    },
+    IdentifierExpression(self) {
+      return targetName(self.ref)
+    },
+    LiteralExpression(self) {
+      return self.value
+    },
+  }
 
-//         def generateDeclaration(self):
-//             emit(f"let {target_name(self)} = {generate(self.initializer)};")
-
-//         def generateAssignment(self):
-//             self.source = generate(self.source)
-//             self.target = generate(self.target)
-//             emit(f"{self.target} = {self.source};")
-
-//         def generatePrintStatement(self):
-//             emit(f"console.log({generate(self.expression)});")
-
-//         def generateBinaryExpression(self):
-//             return f"({generate(self.left)} {self.op} {generate(self.right)})"
-
-//         def generateUnaryExpression(self):
-//             op = {'abs': 'Math.abs', 'sqrt': 'Math.sqrt'}.get(self.op, self.op)
-//             return f"{op}({generate(self.operand)})"
-
-//         def generateIdentifierExpression(self):
-//             return target_name(self.ref)
-
-//         def generateLiteralExpression(self):
-//             return self.value
-
-//         return locals()[f"generate{type(node).__name__}"](node)
-
-//     generate(program)
-//     return buffer.getvalue()
+  gen(program)
+  return lines.join("\n")
+}

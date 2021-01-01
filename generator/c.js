@@ -4,6 +4,10 @@
 // as a string.
 // """
 
+export default function generate(program) {
+  return null
+}
+
 // from io import StringIO
 // from ast import *
 

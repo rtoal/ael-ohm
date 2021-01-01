@@ -5,10 +5,10 @@
 // from ael.optimizer import optimize
 // from ael.generator import generate
 
-// # Ideally there should be a ton of test cases here, right now we don't
-// # have many. Should have 100% coverage though.
+// Ideally there should be a ton of test cases here, right now we don't
+// have many. Should have 100% coverage though.
 
-// small_ael_program = dedent("""\
+// smallAelProgram = dedent("""\
 //     let x = 3
 //     x = 5 * sqrt x / x + x - abs x
 //     print x

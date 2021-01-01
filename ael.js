@@ -27,6 +27,6 @@ if (process.argv.length !== 4) {
       console.log(compile(buffer.toString(), process.argv[3]))
     })
     .catch(e => {
-      console.error("File cannot be read")
+      console.error(`File cannot be read: ${e}`)
     })
 }

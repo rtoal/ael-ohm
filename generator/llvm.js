@@ -5,6 +5,10 @@
 // using any LLVM libraries and we're just writing out LLVM IR as text.
 // """
 
+export default function generate(program) {
+  return null
+}
+
 // from io import StringIO
 // from ast import *
 
