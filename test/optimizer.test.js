@@ -1,42 +1,59 @@
-// import pytest
-// from ael.optimizer import optimize
-// from ael.analyzer import analyze
-// from ael.parser import parse
+import assert from "assert"
+import util from "util"
+import parse from "../parser.js"
+import analyze from "../analyzer.js"
+import optimize from "../optimizer.js"
 
-// @pytest.mark.parametrize("before, after", [
-//     ("print 8 + 5", "print 13"),
-//     ("print 8 - 5", "print 3"),
-//     ("print 8 * 5", "print 40"),
-//     ("print 8 / 5", "print 1.6"),
-//     ("let x = 8\nprint x - 0", "let x = 8\nprint x"),
-//     ("let x = 8\nprint x + 0", "let x = 8\nprint x"),
-//     ("let x = 8\nprint x * 1", "let x = 8\nprint x"),
-//     ("let x = 8\nprint x / 1", "let x = 8\nprint x"),
-//     ("let x = 8\nprint x * 0", "let x = 8\nprint 0"),
-//     ("let x = 8\nprint 0 * x", "let x = 8\nprint 0"),
-//     ("let x = 8\nprint 0 / x", "let x = 8\nprint 0"),
-//     ("let x = 8\nprint 0 - x", "let x = 8\nprint -x"),
-//     ("let x = 8\nprint 0 + x", "let x = 8\nprint x"),
-//     ("let x = 8\nprint 1 * x", "let x = 8\nprint x")])
-// def test_optimizer_optimizes_binary_expressions(before, after):
-//     assert str(optimize(analyze(parse(before)))) == str(analyze(parse(after)))
+const binaryOptimizationFixture = [
+  ["folds +", "print 8 + 5", "print 13"],
+  ["folds -", "print 8 - 5", "print 3"],
+  ["folds *", "print 8 * 5", "print 40"],
+  ["folds /", "print 8 / 5", "print 1.6"],
+  ["optimizes -0", "let x = 8\nprint x - 0", "let x = 8\nprint x"],
+  ["optimizes +0", "let x = 8\nprint x + 0", "let x = 8\nprint x"],
+  ["optimizes *1", "let x = 8\nprint x * 1", "let x = 8\nprint x"],
+  ["optimizes /1", "let x = 8\nprint x / 1", "let x = 8\nprint x"],
+  ["optimizes *0", "let x = 8\nprint x * 0", "let x = 8\nprint 0"],
+  ["optimizes 0*", "let x = 8\nprint 0 * x", "let x = 8\nprint 0"],
+  ["optimizes 0/", "let x = 8\nprint 0 / x", "let x = 8\nprint 0"],
+  ["optimizes 0-", "let x = 8\nprint 0 - x", "let x = 8\nprint -x"],
+  ["optimizes 0+", "let x = 8\nprint 0 + x", "let x = 8\nprint x"],
+  ["optimizes 1*", "let x = 8\nprint 1 * x", "let x = 8\nprint x"],
+]
 
-// @pytest.mark.parametrize("before, after", [
-//     ("print abs(-5)", "print 5"),
-//     ("print abs(8)", "print 8"),
-//     ("print sqrt 2.25", "print 1.5")])
-// def test_optimizer_optimizes_unary_expressions(before, after):
-//     assert str(optimize(analyze(parse(before)))) == str(analyze(parse(after)))
+const unaryOptimizationFixture = [
+  ["folds abs for negatives", "print abs(-5)", "print 5"],
+  ["folds abs for positive", "print abs(8)", "print 8"],
+  ["folds sqrt", "print sqrt 2.25", "print 1.5"],
+]
 
-// @pytest.mark.parametrize("before, after", [
-//     ("let x = 0\nx = x", "let x = 0"),
-//     ("let x = 0\nx = x\nprint x", "let x = 0\nprint x")])
-// def test_optimizer_removes_assignments_to_self(before, after):
-//     assert str(optimize(analyze(parse(before)))) == str(analyze(parse(after)))
+const statementOptimizationFixture = [
+  ["removes x=x at end", "let x = 0\nx = x", "let x = 0"],
+  ["removes x=x in middle", "let x = 0\nx = x\nprint x", "let x = 0\nprint x"],
+]
 
-// @pytest.mark.parametrize("source", [
-//     "let x = 0\nprint x * 5",
-//     "let x = 0\nprint x * 5",
-//     "let x = 5\nx = -x"])
-// def test_optimizer_passes_through_non_optimizable_constructs(source):
-//     assert str(optimize(analyze(parse(source)))) == str(analyze(parse(source)))
+// We have to test that non-optimizable constructs are left unchanged!
+const nothingToOptimzeFixture = [
+  [
+    "passes through nonoptimizable constructs",
+    ...Array(2).fill("let x=0\nlet y=9\nx=y*abs x"),
+  ],
+]
+
+describe("The optimzer", () => {
+  for (const fixture of [
+    binaryOptimizationFixture,
+    unaryOptimizationFixture,
+    statementOptimizationFixture,
+    nothingToOptimzeFixture,
+  ]) {
+    for (const [scenario, before, after] of fixture) {
+      it(`${scenario}`, done => {
+        const actual = util.format(optimize(analyze(parse(before))))
+        const expected = util.format(analyze(parse(after)))
+        assert.deepStrictEqual(actual, expected)
+        done()
+      })
+    }
+  }
+})

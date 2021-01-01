@@ -9,7 +9,11 @@
 //   - constant folding
 //   - some strength reductions (+0, -0, *0, *1, etc.)
 
-import { IdentifierExpression, LiteralExpression } from "./ast.js"
+import {
+  IdentifierExpression,
+  LiteralExpression,
+  UnaryExpression,
+} from "./ast.js"
 
 export default function optimize(node) {
   return optimizers[node.constructor.name](node)
@@ -17,7 +21,7 @@ export default function optimize(node) {
 
 const optimizers = {
   Program(self) {
-    self.statements.map(optimize).filter(s => s !== null)
+    self.statements = self.statements.map(optimize).filter(s => s !== null)
     return self
   },
   Declaration(self) {
@@ -59,10 +63,10 @@ const optimizers = {
       } else if (x === 1 && self.op === "*") {
         return self.right
       } else if (x === 0 && self.op === "-") {
-        return UnaryExpression("-", self.right)
+        return new UnaryExpression("-", self.right)
       } else if (x === 0 && self.op === "*") {
         return new LiteralExpression(0)
-      } else if (x === 1 && self.op === "*") {
+      } else if (x === 0 && self.op === "/") {
         return new LiteralExpression(0)
       }
     } else if (self.right.constructor === LiteralExpression) {
@@ -84,7 +88,7 @@ const optimizers = {
       if (self.op === "-") {
         return new LiteralExpression(-x)
       } else if (self.op === "abs") {
-        return new LiteralExpression(abs(x))
+        return new LiteralExpression(Math.abs(x))
       } else if (self.op === "sqrt") {
         return new LiteralExpression(Math.sqrt(x))
       }
