@@ -13,19 +13,23 @@
 
 class Context {
   constructor(context) {
+    // Ael is so simple that the only analysis context needed is the set of
+    // declared variables. We store this as a map, indexed by the variable name,
+    // for efficient lookup.
+    //
     // In real life, contexts are much larger than just a table: they would
     // also record the current function or module, whether you were in a
     // loop (for validating breaks and continues), and have a reference to
     // the parent contxt (to do static scope analysis) among other things.
     this.locals = new Map()
   }
-  addVariable(name, variable) {
-    if (this.locals.has(name)) {
-      throw new Error(`Identifier ${name} already declared`)
+  addDeclaration(variable) {
+    if (this.locals.has(variable.name)) {
+      throw new Error(`Identifier ${variable.name} already declared`)
     }
-    this.locals.set(name, variable)
+    this.locals.set(variable.name, variable)
   }
-  lookupVariable(name) {
+  lookup(name) {
     const variable = this.locals.get(name)
     if (variable) {
       return variable
@@ -39,33 +43,41 @@ export default function analyze(node, context = new Context()) {
   return node
 }
 
+// These are trivial, but only because Ael is so small. Irl, these
+// analyzer functions would be filled with type checks, access checks,
+// read-only checks, argument checks, and so much more (e.g., is this
+// return statement outside of a function? Is this break outside of a
+// loop?)
 const analyzers = {
-  Program(self, context) {
-    for (const s of self.statements) {
+  Program(p, context) {
+    for (const s of p.statements) {
       analyze(s, context)
     }
   },
-  Declaration(self, context) {
-    analyze(self.initializer, context)
-    context.addVariable(self.name, self, context)
+  Declaration(d, context) {
+    analyze(d.initializer, context)
+    // Record this variable in the context since we might have to look it up
+    context.addDeclaration(d)
   },
-  Assignment(self, context) {
-    analyze(self.source, context)
-    analyze(self.target, context)
+  Assignment(s, context) {
+    analyze(s.source, context)
+    analyze(s.target, context)
   },
-  PrintStatement(self, context) {
-    analyze(self.expression, context)
+  PrintStatement(s, context) {
+    analyze(s.expression, context)
   },
-  BinaryExpression(self, context) {
-    analyze(self.left, context)
-    analyze(self.right, context)
+  BinaryExpression(e, context) {
+    analyze(e.left, context)
+    analyze(e.right, context)
   },
-  UnaryExpression(self, context) {
-    analyze(self.operand, context)
+  UnaryExpression(e, context) {
+    analyze(e.operand, context)
   },
-  IdentifierExpression(self, context) {
-    // All identifiers must already be declared
-    self.ref = context.lookupVariable(self.name)
+  IdentifierExpression(e, context) {
+    // Tag this variable reference with the declaration it references
+    e.ref = context.lookup(e.name)
   },
-  LiteralExpression(self, context) {},
+  LiteralExpression(e, context) {
+    // There is LITERALly nothing to analyze here (sorry)
+  },
 }
