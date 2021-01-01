@@ -1,19 +1,13 @@
 {
   "name": "ael-ohm",
   "version": "1.0.0",
-  "description": "Compiler for ael using ohm",
+  "description": "Compiler for Ael using Ohm",
   "main": "ael.js",
   "type": "module",
-  "directories": {
-    "doc": "docs",
-    "example": "examples",
-    "test": "tests"
-  },
   "scripts": {
     "test": "c8 node_modules/.bin/mocha"
   },
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "ohm-js": "^15.3.0"
   },
