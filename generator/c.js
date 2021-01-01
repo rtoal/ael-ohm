@@ -44,7 +44,7 @@ export default function generate(program) {
       emit(`${self.target} = ${self.source};`)
     },
     PrintStatement(self) {
-      emit(`printf("%g\\n", {gen(self.expression)});`)
+      emit(`printf("%g\\n", ${gen(self.expression)});`)
     },
     BinaryExpression(self) {
       return `(${gen(self.left)} ${self.op} ${gen(self.right)})`
