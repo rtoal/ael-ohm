@@ -56,7 +56,7 @@ const smallFixture = {
 
 describe("The code generator", () => {
   for (const fixture of [smallFixture]) {
-    for (const target of ["js", "c" /* "llvm" */]) {
+    for (const target of ["js", "c", "llvm"]) {
       it(`produces expected output for the ${fixture.name} program`, done => {
         const intermediate = optimize(analyze(parse(fixture.source)))
         const actual = generate(target)(intermediate)
