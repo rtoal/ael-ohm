@@ -1,31 +1,33 @@
-// """Code Generator Ael -> LLVM
-
+// Code Generator Ael -> LLVM
+//
 // Invoke generate(program) with the program node to get the LLVM translation
 // as a string. As this compiler is written totally from scratch, we're not
 // using any LLVM libraries and we're just writing out LLVM IR as text.
-// """
 
 export default function generate(program) {
+  const lines = []
+  let ael_variable_to_llvm = new Map()
+  let nextLLVMRegister = -1
+
+  function new_llvm_local() {
+    // Variables in LLVM IR are just %0, %1, %2, ...
+    nextLLVMRegister += 1
+    return `%${nextLLVMRegister}`
+  }
+
+  function gen(node) {
+    return generators[node.constructor.name](node)
+  }
+
+  function emit(line) {
+    lines.push(line)
+  }
+
+  // TODO
   return null
 }
 
-// from io import StringIO
-// from ast import *
-
-// def generate(program):
-//     buffer = StringIO()
-//     ael_variable_to_llvm = {}
-//     next_llvm_register = -1
-
-//     def new_llvm_local():
-//         # Variables in LLVM IR are just %0, %1, %2, ...
-//         nonlocal next_llvm_register
-//         next_llvm_register += 1
-//         return f"%{next_llvm_register}"
-
 //     def generate(node):
-//         def emit(line):
-//             print(line, file=buffer)
 
 //         def generateProgram(self):
 //             emit('@format = private constant [3 x i8] c"%g\\0A"')
@@ -85,8 +87,3 @@ export default function generate(program) {
 //             # Glad we're writing this in Python, as this cast gives us the
 //             # numbers in exactly the format expected by LLVM. So nice.
 //             return float(self.value)
-
-//         return locals()[f"generate{type(node).__name__}"](node)
-
-//     generate(program)
-//     return buffer.getvalue()
