@@ -6,19 +6,19 @@
 import ohm from "ohm-js"
 import * as ast from "./ast.js"
 
-const aelGrammar = ohm.grammar(`Ael {
+const aelGrammar = ohm.grammar(String.raw`Ael {
   Program   = Statement+
-  Statement = let id "=" Exp              --declare
-            | id "=" Exp                  --assign
-            | print Exp                   --print
-  Exp       = Exp ("+" | "-") Term        --binary
+  Statement = let id "=" Exp                  --declare
+            | id "=" Exp                      --assign
+            | print Exp                       --print
+  Exp       = Exp ("+" | "-") Term            --binary
             | Term
-  Term      = Term ("*"| "/") Factor      --binary
+  Term      = Term ("*"| "/") Factor          --binary
             | Factor
   Factor    = id
             | num
-            | "(" Exp ")"                 --parens
-            | ("-" | abs | sqrt) Factor   --unary
+            | "(" Exp ")"                     --parens
+            | ("-" | abs | sqrt) Factor       --unary
   num       = digit+ ("." digit+)?
   let       = "let" ~alnum
   print     = "print" ~alnum
@@ -26,7 +26,7 @@ const aelGrammar = ohm.grammar(`Ael {
   sqrt      = "sqrt" ~alnum
   keyword   = let | print | abs | sqrt
   id        = ~keyword letter alnum*
-  space    += "//" (~"\\n" any)* "\\n"    --comment
+  space    += "//" (~"\n" any)* ("\n" | end)  --comment
 }`)
 
 const astBuilder = aelGrammar.createSemantics().addOperation("ast", {

@@ -4,7 +4,7 @@ import parse from "../parser.js"
 
 const source = `let two = 2 - 0
   print(1 * two)   // TADA 🥑 
-  two = sqrt 101.3`
+  two = sqrt 101.3 //`
 
 const expectedAst = `   1 | program: Program
    2 |   statements[0]: Declaration name='two'
