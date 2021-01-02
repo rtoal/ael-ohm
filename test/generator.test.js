@@ -15,13 +15,13 @@ const smallFixture = {
   name: "small",
   source: `
     let x = 3.1
-    x = 5 * sqrt x / x + x - abs x
+    x = 5 * sqrt x / -x + x - abs x
     print x
   `,
   expected: {
     js: dedent`
       let x_1 = 3.1;
-      x_1 = ((((5 * Math.sqrt(x_1)) / x_1) + x_1) - Math.abs(x_1));
+      x_1 = ((((5 * Math.sqrt(x_1)) / -(x_1)) + x_1) - Math.abs(x_1));
       console.log(x_1);
     `,
     c: dedent`
@@ -29,7 +29,7 @@ const smallFixture = {
       #include <math.h>
       int main() {
       double x_1 = 3.1;
-      x_1 = ((((5 * sqrt(x_1)) / x_1) + x_1) - fabs(x_1));
+      x_1 = ((((5 * sqrt(x_1)) / -(x_1)) + x_1) - fabs(x_1));
       printf("%g\\n", x_1);
       return 0;
       }
@@ -43,11 +43,12 @@ const smallFixture = {
       entry:
       %0 = call double @llvm.sqrt.f64(double 3.1)
       %1 = fmul double 5.0, %0
-      %2 = fdiv double %1, 3.1
-      %3 = fadd double %2, 3.1
-      %4 = call double @llvm.fabs(double 3.1)
-      %5 = fsub double %3, %4
-      call i64 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @format, i64 0, i64 0), double %5)
+      %2 = fneg double 3.1
+      %3 = fdiv double %1, %2
+      %4 = fadd double %3, 3.1
+      %5 = call double @llvm.fabs(double 3.1)
+      %6 = fsub double %4, %5
+      call i64 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @format, i64 0, i64 0), double %6)
       ret i64 0
       }
     `,
