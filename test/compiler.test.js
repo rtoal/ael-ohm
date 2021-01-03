@@ -1,6 +1,6 @@
 import assert from "assert"
 import util from "util"
-import compile from "../compiler.js"
+import compile from "../src/compiler.js"
 
 const sampleProgram = "print 0"
 

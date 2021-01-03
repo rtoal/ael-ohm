@@ -1,7 +1,7 @@
 import assert from "assert"
 import util from "util"
-import parse from "../parser.js"
-import analyze from "../analyzer.js"
+import parse from "../src/parser.js"
+import analyze from "../src/analyzer.js"
 
 const source = `let two = 2 - 0
   print(1 * two)   // TADA 🥑 

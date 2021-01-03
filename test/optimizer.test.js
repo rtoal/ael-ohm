@@ -1,8 +1,8 @@
 import assert from "assert"
 import util from "util"
-import parse from "../parser.js"
-import analyze from "../analyzer.js"
-import optimize from "../optimizer.js"
+import parse from "../src/parser.js"
+import analyze from "../src/analyzer.js"
+import optimize from "../src/optimizer.js"
 
 const binaryOptimizationFixture = [
   ["folds +", "print 8 + 5", "print 13"],

@@ -1,8 +1,8 @@
 import assert from "assert"
-import parse from "../parser.js"
-import analyze from "../analyzer.js"
-import optimize from "../optimizer.js"
-import generate from "../generator/index.js"
+import parse from "../src/parser.js"
+import analyze from "../src/analyzer.js"
+import optimize from "../src/optimizer.js"
+import generate from "../src/generator/index.js"
 
 function dedent(s) {
   return `${s}`.replace(/(\n)\s+/g, "$1").trim()
