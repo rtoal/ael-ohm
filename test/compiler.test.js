@@ -29,12 +29,12 @@ describe("The compiler", () => {
     assert(util.format(compiled).startsWith("console.log(0)"))
     done()
   })
-  it("generates js code when given the js option", done => {
+  it("generates js code when given the c option", done => {
     const compiled = compile(sampleProgram, "c")
     assert(util.format(compiled).startsWith("#include"))
     done()
   })
-  it("generates js code when given the js option", done => {
+  it("generates js code when given the llvm option", done => {
     const compiled = compile(sampleProgram, "llvm")
     assert(util.format(compiled).startsWith("@format ="))
     done()
