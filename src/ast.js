@@ -17,7 +17,7 @@ export class Program {
     this.statements = statements
   }
   [util.inspect.custom]() {
-    return text(this)
+    return prettied(this)
   }
 }
 
@@ -63,41 +63,37 @@ export class LiteralExpression {
   }
 }
 
-function text(node) {
-  // Return a compact but pretty string representation of the node graph,
-  // taking care of cycles. Written here from scracth because the built-in
-  // stringification function, while nice, isn't nice enough.
-  const lines = []
+function prettied(node) {
+  // Return a compact and pretty string representation of the node graph,
+  // taking care of cycles. Written here from scratch because the built-in
+  // inspect function, while nice, isn't nice enough.
   const seen = new Map()
   let nodeId = 0
 
-  function subtree_text(node, prefix, indent) {
+  function* prettiedSubtree(node, prefix, indent = 0) {
     seen.set(node, ++nodeId)
     let descriptor = `${" ".repeat(indent)}${prefix}: ${node.constructor.name}`
-    let [simple_props, complex_props] = ["", []]
+    let [simpleProps, complexProps] = ["", []]
     for (const [prop, child] of Object.entries(node)) {
       if (seen.has(child)) {
-        simple_props += ` ${prop}=$${seen.get(child)}`
+        simpleProps += ` ${prop}=$${seen.get(child)}`
       } else if (Array.isArray(child) || (child && typeof child == "object")) {
-        complex_props.push([prop, child])
+        complexProps.push([prop, child])
       } else {
-        simple_props += ` ${prop}=${util.inspect(child)}`
+        simpleProps += ` ${prop}=${util.inspect(child)}`
       }
     }
-    lines.push(
-      `${String(nodeId).padStart(4, " ")} | ${descriptor}${simple_props}`
-    )
-    for (let [prop, child] of complex_props) {
+    yield `${String(nodeId).padStart(4, " ")} | ${descriptor}${simpleProps}`
+    for (let [prop, child] of complexProps) {
       if (Array.isArray(child)) {
         for (let [index, node] of child.entries()) {
-          subtree_text(node, `${prop}[${index}]`, indent + 2)
+          yield* prettiedSubtree(node, `${prop}[${index}]`, indent + 2)
         }
       } else {
-        subtree_text(child, prop, indent + 2)
+        yield* prettiedSubtree(child, prop, indent + 2)
       }
     }
   }
 
-  subtree_text(node, "program", 0)
-  return lines.join("\n")
+  return [...prettiedSubtree(node, "program")].join("\n")
 }
