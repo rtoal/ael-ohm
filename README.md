@@ -25,18 +25,19 @@ print y / sqrt 3
 Here is the grammar in Ohm notation:
 
 ```
+Ael {
   Program   = Statement+
-  Statement = let id "=" Exp              --declare
-            | id "=" Exp                  --assign
-            | print Exp                   --print
-  Exp       = Exp ("+" | "-") Term        --binary
+  Statement = let id "=" Exp                  --declare
+            | id "=" Exp                      --assign
+            | print Exp                       --print
+  Exp       = Exp ("+" | "-") Term            --binary
             | Term
-  Term      = Term ("*"| "/") Factor      --binary
+  Term      = Term ("*"| "/") Factor          --binary
             | Factor
   Factor    = id
             | num
-            | "(" Exp ")"                 --parens
-            | ("-" | abs | sqrt) Factor   --unary
+            | "(" Exp ")"                     --parens
+            | ("-" | abs | sqrt) Factor       --unary
   num       = digit+ ("." digit+)?
   let       = "let" ~alnum
   print     = "print" ~alnum
@@ -44,7 +45,8 @@ Here is the grammar in Ohm notation:
   sqrt      = "sqrt" ~alnum
   keyword   = let | print | abs | sqrt
   id        = ~keyword letter alnum*
-  space    += "//" (~"\\n" any)* "\\n"    --comment
+  space    += "//" (~"\n" any)* ("\n" | end)  --comment
+}
 ```
 
 ## Running
