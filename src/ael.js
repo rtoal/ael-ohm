@@ -6,9 +6,9 @@ import compile from "./compiler.js"
 
 const help = `Ael compiler
 
-Syntax: aelc <filename> <output_type>
+Syntax: aelc <filename> <outputType>
 
-Prints to stdout according to <output_type>, which must be one of:
+Prints to stdout according to <outputType>, which must be one of:
 
   tokens     the token sequence
   ast        the abstract syntax tree

@@ -2,7 +2,7 @@
 //
 // This module exports a single function
 //
-//   compile(source_code_string, outputType)
+//   compile(sourceCodeString, outputType)
 //
 // The second argument tells the compiler what to return. It must be one of:
 //

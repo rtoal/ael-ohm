@@ -54,7 +54,7 @@ The compiler is written in modern JavaScript.
 Because this application was written as a tutorial, the compiler exposes what each phase does, as well as providing multiple translations:
 
 ```
-src/aelc.js <filename> <output_type>
+src/aelc.js <filename> <outputType>
 ```
 
 The output type argument tells the compiler what to print to standard output:
