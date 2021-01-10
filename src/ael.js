@@ -6,7 +6,7 @@ import compile from "./compiler.js"
 
 const help = `Ael compiler
 
-Syntax: aelc <filename> <outputType>
+Syntax: src/ael.js <filename> <outputType>
 
 Prints to stdout according to <outputType>, which must be one of:
 

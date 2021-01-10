@@ -22,7 +22,7 @@ export default function generate(program) {
       output.push("declare double @llvm.sqrt.f64(double)")
       output.push("define i64 @main() {")
       output.push("entry:")
-      p.statements.forEach(gen)
+      gen(p.statements)
       output.push("ret i64 0")
       output.push("}")
     },
@@ -72,6 +72,9 @@ export default function generate(program) {
     LiteralExpression(e) {
       // LLVM is very picky about its float literals!
       return `${e.value}${Number.isInteger(e.value) ? ".0" : ""}`
+    },
+    Array(a) {
+      a.forEach(gen)
     },
   }
 

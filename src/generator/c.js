@@ -26,7 +26,7 @@ export default function generate(program) {
       output.push("#include <stdio.h>")
       output.push("#include <math.h>")
       output.push("int main() {")
-      p.statements.forEach(gen)
+      gen(p.statements)
       output.push("return 0;")
       output.push("}")
     },
@@ -53,6 +53,9 @@ export default function generate(program) {
     },
     LiteralExpression(e) {
       return e.value
+    },
+    Array(a) {
+      a.forEach(gen)
     },
   }
 

@@ -33,19 +33,19 @@ const statementOptimizationFixture = [
 ]
 
 // We have to test that non-optimizable constructs are left unchanged!
-const nothingToOptimzeFixture = [
+const nothingToOptimizeFixture = [
   [
     "passes through nonoptimizable constructs",
     ...Array(2).fill("let x=0\nlet y=9\nx=y*abs x"),
   ],
 ]
 
-describe("The optimzer", () => {
+describe("The optimizer", () => {
   for (const fixture of [
     binaryOptimizationFixture,
     unaryOptimizationFixture,
     statementOptimizationFixture,
-    nothingToOptimzeFixture,
+    nothingToOptimizeFixture,
   ]) {
     for (const [scenario, before, after] of fixture) {
       it(`${scenario}`, done => {

@@ -20,7 +20,7 @@ class Context {
     // In real life, contexts are much larger than just a table: they would
     // also record the current function or module, whether you were in a
     // loop (for validating breaks and continues), and have a reference to
-    // the parent contxt (to do static scope analysis) among other things.
+    // the parent context (to do static scope analysis) among other things.
     this.locals = new Map()
   }
   addDeclaration(variable) {
@@ -50,9 +50,7 @@ export default function analyze(node, context = new Context()) {
 // loop?)
 const analyzers = {
   Program(p, context) {
-    for (const s of p.statements) {
-      analyze(s, context)
-    }
+    analyze(p.statements, context)
   },
   Declaration(d, context) {
     analyze(d.initializer, context)
@@ -78,6 +76,9 @@ const analyzers = {
     e.referent = context.lookup(e.name)
   },
   LiteralExpression(e, context) {
-    // There is LITERALly nothing to analyze here (sorry)
+    // There is LITERALly nothing to analyze here
+  },
+  Array(a, context) {
+    a.forEach(s => analyze(s, context))
   },
 }

@@ -23,7 +23,7 @@ export default function generate(program) {
 
   const generators = {
     Program(p) {
-      p.statements.forEach(gen)
+      gen(p.statements)
     },
     Declaration(d) {
       output.push(`let ${targetName(d)} = ${gen(d.initializer)};`)
@@ -48,6 +48,9 @@ export default function generate(program) {
     },
     LiteralExpression(e) {
       return e.value
+    },
+    Array(a) {
+      a.forEach(gen)
     },
   }
 

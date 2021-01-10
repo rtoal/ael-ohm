@@ -21,7 +21,7 @@ export default function optimize(node) {
 
 const optimizers = {
   Program(p) {
-    p.statements = p.statements.map(optimize).filter(s => s !== null)
+    p.statements = optimize(p.statements)
     return p
   },
   Declaration(d) {
@@ -100,5 +100,8 @@ const optimizers = {
   },
   LiteralExpression(e) {
     return e
+  },
+  Array(a) {
+    return a.flatMap(optimize).filter(s => s !== null)
   },
 }
