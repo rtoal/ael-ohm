@@ -19,16 +19,18 @@ Prints to stdout according to <outputType>, which must be one of:
   llvm       the translation to LLVM
 `
 
+async function compileFromFile(filename, outputType) {
+  try {
+    const buffer = await fs.readFile(filename)
+    console.log(compile(buffer.toString(), outputType))
+  } catch (e) {
+    console.error(`${e}`)
+    process.exitCode = 1
+  }
+}
+
 if (process.argv.length !== 4) {
   console.log(help)
 } else {
-  ;(async () => {
-    try {
-      const buffer = await fs.readFile(process.argv[2])
-      console.log(compile(buffer.toString(), process.argv[3]))
-    } catch (e) {
-      console.error(`${e}`)
-      process.exitCode = 1
-    }
-  })()
+  compileFromFile(process.argv[2], process.argv[3])
 }
