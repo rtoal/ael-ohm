@@ -1,6 +1,6 @@
 // Optimizer
 //
-// This module exports a single funciton to perform machine-independent
+// This module exports a single function to perform machine-independent
 // optimizations on the analyzed semantic graph.
 //
 // The only optimizations supported here are:
