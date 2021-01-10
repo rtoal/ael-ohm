@@ -32,7 +32,7 @@ const optimizers = {
     s.source = optimize(s.source)
     s.target = optimize(s.target)
     if (s.target.constructor == IdentifierExpression) {
-      if (s.source.ref === s.target.ref) {
+      if (s.source.referent === s.target.referent) {
         return null
       }
     }

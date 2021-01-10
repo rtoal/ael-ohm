@@ -38,7 +38,7 @@ export default function generate(program) {
       // assignments refer to already-declared Ael variables. So
       // whatever got computed on the right hand side is what this
       // variable will reference form now on.
-      registerFor[s.target.ref] = gen(s.source)
+      registerFor[s.target.referent] = gen(s.source)
     },
     PrintStatement(s) {
       const format =
@@ -67,7 +67,7 @@ export default function generate(program) {
       return target
     },
     IdentifierExpression(e) {
-      return registerFor[e.ref]
+      return registerFor[e.referent]
     },
     LiteralExpression(e) {
       // LLVM is very picky about its float literals!

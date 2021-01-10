@@ -44,7 +44,7 @@ export default function generate(program) {
       return `${op}(${gen(e.operand)})`
     },
     IdentifierExpression(e) {
-      return targetName(e.ref)
+      return targetName(e.referent)
     },
     LiteralExpression(e) {
       return e.value

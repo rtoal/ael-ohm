@@ -75,7 +75,7 @@ const analyzers = {
   },
   IdentifierExpression(e, context) {
     // Tag this variable reference with the declaration it references
-    e.ref = context.lookup(e.name)
+    e.referent = context.lookup(e.name)
   },
   LiteralExpression(e, context) {
     // There is LITERALly nothing to analyze here (sorry)

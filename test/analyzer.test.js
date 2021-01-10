@@ -15,9 +15,9 @@ const expectedAst = String.raw`   1 | program: Program
    6 |   statements[1]: PrintStatement
    7 |     expression: BinaryExpression op='*'
    8 |       left: LiteralExpression value=1
-   9 |       right: IdentifierExpression name='two' ref=$2
+   9 |       right: IdentifierExpression name='two' referent=$2
   10 |   statements[2]: Assignment
-  11 |     target: IdentifierExpression name='two' ref=$2
+  11 |     target: IdentifierExpression name='two' referent=$2
   12 |     source: UnaryExpression op='sqrt'
   13 |       operand: LiteralExpression value=101.3`
 
