@@ -26,7 +26,7 @@ export default function generate(program) {
       output.push("ret i64 0")
       output.push("}")
     },
-    Declaration(d) {
+    VariableDeclaration(d) {
       // Ael is such a boring language; since there are no loops or
       // conditions, Ael variables just map to the generated LLVM
       // registers, so it's frighteningly trivial.
@@ -43,7 +43,7 @@ export default function generate(program) {
     PrintStatement(s) {
       const format =
         "i8* getelementptr inbounds ([3 x i8], [3 x i8]* @format, i64 0, i64 0)"
-      const operand = `double ${gen(s.expression)}`
+      const operand = `double ${gen(s.argument)}`
       output.push(`call i64 (i8*, ...) @printf(${format}, ${operand})`)
     },
     BinaryExpression(e) {
@@ -69,7 +69,7 @@ export default function generate(program) {
     IdentifierExpression(e) {
       return registerFor[e.referent]
     },
-    LiteralExpression(e) {
+    Literal(e) {
       // LLVM is very picky about its float literals!
       return `${e.value}${Number.isInteger(e.value) ? ".0" : ""}`
     },

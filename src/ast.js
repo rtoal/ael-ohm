@@ -21,9 +21,15 @@ export class Program {
   }
 }
 
-export class Declaration {
+export class VariableDeclaration {
   constructor(name, initializer) {
     Object.assign(this, { name, initializer })
+  }
+}
+
+export class Variable {
+  constructor(name) {
+    Object.assign(this, { name })
   }
 }
 
@@ -34,8 +40,8 @@ export class Assignment {
 }
 
 export class PrintStatement {
-  constructor(expression) {
-    this.expression = expression
+  constructor(argument) {
+    this.argument = argument
   }
 }
 
@@ -57,7 +63,7 @@ export class IdentifierExpression {
   }
 }
 
-export class LiteralExpression {
+export class Literal {
   constructor(value) {
     this.value = value
   }
