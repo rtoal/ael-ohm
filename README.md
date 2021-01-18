@@ -15,7 +15,7 @@ Here is a sample program in the language:
 ```
 let x = 3 * 9
 let y = 793 + (2 / abs 80 + x) * x
-print 8 * x - (-y)
+print 8.55 * x - (-y)
 x = y
 print y / sqrt 3
 ```
@@ -27,7 +27,7 @@ Here is the grammar in Ohm notation:
 ```
 Ael {
   Program   = Statement+
-  Statement = let id "=" Exp                  --declare
+  Statement = let id "=" Exp                  --variable
             | id "=" Exp                      --assign
             | print Exp                       --print
   Exp       = Exp ("+" | "-") Term            --binary
