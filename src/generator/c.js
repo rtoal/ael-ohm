@@ -30,8 +30,8 @@ export default function generate(program) {
       output.push("return 0;")
       output.push("}")
     },
-    VariableDeclaration(d) {
-      output.push(`double ${targetName(d.variable)} = ${gen(d.initializer)};`)
+    Variable(v) {
+      output.push(`double ${targetName(v)} = ${gen(v.initializer)};`)
     },
     Assignment(s) {
       const source = gen(s.source)

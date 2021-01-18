@@ -8,7 +8,7 @@ import * as ast from "./ast.js"
 
 const aelGrammar = ohm.grammar(String.raw`Ael {
   Program   = Statement+
-  Statement = let id "=" Exp                  --vardecl
+  Statement = let id "=" Exp                  --variable
             | id "=" Exp                      --assign
             | print Exp                       --print
   Exp       = Exp ("+" | "-") Term            --binary
@@ -33,8 +33,8 @@ const astBuilder = aelGrammar.createSemantics().addOperation("ast", {
   Program(body) {
     return new ast.Program(body.ast())
   },
-  Statement_vardecl(_let, id, _eq, expression) {
-    return new ast.VariableDeclaration(id.sourceString, expression.ast())
+  Statement_variable(_let, id, _eq, expression) {
+    return new ast.Variable(id.sourceString, expression.ast())
   },
   Statement_assign(id, _eq, expression) {
     return new ast.Assignment(

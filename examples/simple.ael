@@ -1,4 +1,4 @@
-let dozen = 3 * (1 + sqrt 9)
-let y = 1 * dozen
-dozen = y + 0
-print abs dozen - y
+let dozen = 1 * (0 + sqrt 101.3)
+let y = dozen - 0    // TADA 🥑
+dozen = 0 / y
+print abs dozen //

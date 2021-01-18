@@ -20,9 +20,9 @@ const optimizers = {
     p.statements = optimize(p.statements)
     return p
   },
-  VariableDeclaration(d) {
-    d.initializer = optimize(d.initializer)
-    return d
+  Variable(v) {
+    v.initializer = optimize(v.initializer)
+    return v
   },
   Assignment(s) {
     s.source = optimize(s.source)

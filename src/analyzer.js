@@ -54,11 +54,10 @@ const analyzers = {
   Program(program, context) {
     analyze(program.statements, context)
   },
-  VariableDeclaration(declaration, context) {
-    analyze(declaration.initializer, context)
-    declaration.variable = new Variable(declaration.name)
+  Variable(variable, context) {
+    analyze(variable.initializer, context)
     // Record this variable in the context since we might have to look it up
-    context.add(declaration.name, declaration.variable)
+    context.add(variable.name, variable)
   },
   Assignment(statement, context) {
     analyze(statement.source, context)

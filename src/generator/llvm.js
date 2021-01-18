@@ -26,11 +26,11 @@ export default function generate(program) {
       output.push("ret i64 0")
       output.push("}")
     },
-    VariableDeclaration(d) {
+    Variable(v) {
       // Ael is such a boring language; since there are no loops or
       // conditions, Ael variables just map to the generated LLVM
       // registers, so it's frighteningly trivial.
-      registerFor[d] = gen(d.initializer)
+      registerFor[v] = gen(v.initializer)
     },
     Assignment(s) {
       // There’s no difference between declarations and assignments here;
