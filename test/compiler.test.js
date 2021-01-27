@@ -11,17 +11,17 @@ describe("The compiler", () => {
   })
   it("calls the compiler with the ast option", done => {
     const compiled = compile(sampleProgram, "ast")
-    assert(util.format(compiled).startsWith("   1 | program: Program"))
+    assert(util.format(compiled).startsWith("   1 | Program statements="))
     done()
   })
   it("calls the compiler with the analyzed option", done => {
     const compiled = compile(sampleProgram, "analyzed")
-    assert(util.format(compiled).startsWith("   1 | program: Program"))
+    assert(util.format(compiled).startsWith("   1 | Program statements="))
     done()
   })
   it("calls the compiler with the optimized option", done => {
     const compiled = compile(sampleProgram, "optimized")
-    assert(util.format(compiled).startsWith("   1 | program: Program"))
+    assert(util.format(compiled).startsWith("   1 | Program statements="))
     done()
   })
   it("generates js code when given the js option", done => {
