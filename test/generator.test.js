@@ -8,11 +8,8 @@ function dedent(s) {
   return `${s}`.replace(/(\n)\s+/g, "$1").trim()
 }
 
-// Ideally there should be a ton of test cases here, right now we don't
-// have many. Should have 100% coverage though.
-
-const smallFixture = {
-  name: "small",
+// Just one trivial test case for now, enough to get coverage.
+const fixture = {
   source: `
     let x = 3.1
     x = 5 * sqrt x / -x + x - abs x
@@ -56,14 +53,12 @@ const smallFixture = {
 }
 
 describe("The code generator", () => {
-  for (const fixture of [smallFixture]) {
-    for (const target of ["js", "c", "llvm"]) {
-      it(`produces expected ${target} output for the ${fixture.name} program`, done => {
-        const intermediate = optimize(analyze(parse(fixture.source)))
-        const actual = generate(target)(intermediate)
-        assert.deepStrictEqual(actual, fixture.expected[target])
-        done()
-      })
-    }
+  for (const target of ["js", "c", "llvm"]) {
+    it(`produces expected ${target} output for the small program`, done => {
+      const intermediate = optimize(analyze(parse(fixture.source)))
+      const actual = generate(target)(intermediate)
+      assert.deepStrictEqual(actual, fixture.expected[target])
+      done()
+    })
   }
 })
