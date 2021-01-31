@@ -58,9 +58,7 @@ const optimizers = {
         return e.right
       } else if (e.left === 0 && e.op === "-") {
         return new UnaryExpression("-", e.right)
-      } else if (e.left === 0 && e.op === "*") {
-        return 0
-      } else if (e.left === 0 && e.op === "/") {
+      } else if (e.left === 0 && ["*", "/"].includes(e.op)) {
         return 0
       }
     } else if (e.right.constructor === Number) {
@@ -94,6 +92,7 @@ const optimizers = {
     return e
   },
   Array(a) {
+    // Optimizing arrays involves flattening an removing nulls
     return a.flatMap(optimize).filter(s => s !== null)
   },
 }
