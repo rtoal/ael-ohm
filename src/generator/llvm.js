@@ -69,9 +69,9 @@ export default function generate(program) {
     IdentifierExpression(e) {
       return registerFor[e.referent]
     },
-    Literal(e) {
+    Number(e) {
       // LLVM is very picky about its float literals!
-      return `${e.value}${Number.isInteger(e.value) ? ".0" : ""}`
+      return `${e}${Number.isInteger(e) ? ".0" : ""}`
     },
     Array(a) {
       a.forEach(gen)

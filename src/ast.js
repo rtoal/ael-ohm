@@ -57,12 +57,6 @@ export class IdentifierExpression {
   }
 }
 
-export class Literal {
-  constructor(value) {
-    this.value = value
-  }
-}
-
 function prettied(node) {
   // Return a compact and pretty string representation of the node graph,
   // taking care of cycles. Written here from scratch because the built-in

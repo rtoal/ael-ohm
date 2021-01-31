@@ -46,8 +46,8 @@ export default function generate(program) {
     IdentifierExpression(e) {
       return targetName(e.referent)
     },
-    Literal(e) {
-      return e.value
+    Number(e) {
+      return e
     },
     Array(a) {
       a.forEach(gen)
