@@ -1,7 +1,6 @@
 // Parser
 //
-// Exports a single function called parse which accepts the source code
-// as a string and returns the AST.
+// Exports a default function mapping the source code as a string to the AST.
 
 import ohm from "ohm-js"
 import * as ast from "./ast.js"
@@ -34,14 +33,14 @@ const astBuilder = aelGrammar.createSemantics().addOperation("ast", {
   Program(body) {
     return new ast.Program(body.ast())
   },
-  Statement_vardec(_let, id, _eq, expression) {
-    return new ast.Variable(id.sourceString, expression.ast())
+  Statement_vardec(_let, id, _eq, initializer) {
+    return new ast.Variable(id.sourceString, initializer.ast())
   },
-  Statement_assign(variable, _eq, expression) {
-    return new ast.Assignment(variable.ast(), expression.ast())
+  Statement_assign(target, _eq, source) {
+    return new ast.Assignment(target.ast(), source.ast())
   },
-  Statement_print(_print, expression) {
-    return new ast.PrintStatement(expression.ast())
+  Statement_print(_print, argument) {
+    return new ast.PrintStatement(argument.ast())
   },
   Exp_binary(left, op, right) {
     return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())

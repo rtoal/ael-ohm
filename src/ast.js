@@ -64,24 +64,24 @@ function prettied(node) {
   const seen = new Map()
 
   function setIds(node) {
+    if (node === null || typeof node !== "object" || seen.has(node)) return
     seen.set(node, seen.size + 1)
     for (const child of Object.values(node)) {
-      if (seen.has(child)) continue
-      else if (Array.isArray(child)) child.forEach(setIds)
-      else if (child && typeof child == "object") setIds(child)
+      if (Array.isArray(child)) child.forEach(setIds)
+      else setIds(child)
     }
   }
 
   function* lines() {
+    function view(e) {
+      if (seen.has(e)) return `#${seen.get(e)}`
+      if (Array.isArray(e)) return `[${e.map(view)}]`
+      return util.inspect(e)
+    }
     for (let [node, id] of [...seen.entries()].sort((a, b) => a[1] - b[1])) {
       let [type, props] = [node.constructor.name, ""]
       for (const [prop, child] of Object.entries(node)) {
-        const value = seen.has(child)
-          ? `#${seen.get(child)}`
-          : Array.isArray(child)
-          ? `[${child.map(c => `#${seen.get(c)}`)}]`
-          : util.inspect(child)
-        props += ` ${prop}=${value}`
+        props += ` ${prop}=${view(child)}`
       }
       yield `${String(id).padStart(4, " ")} | ${type}${props}`
     }
