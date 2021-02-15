@@ -8,21 +8,19 @@ const source = `let dozen = 1 * (0 + sqrt 101.3)
   dozen = 0 / y
   print abs dozen //`
 
-const expectedAst = String.raw`   1 | Program statements=[#2,#6,#9,#13]
-   2 | Variable name='dozen' initializer=#3
+const expectedAst = String.raw`   1 | Program statements=[#2,#7,#10,#12]
+   2 | VariableDeclaration name='dozen' initializer=#3 variable=#6
    3 | BinaryExpression op='*' left=1 right=#4
    4 | BinaryExpression op='+' left=0 right=#5
    5 | UnaryExpression op='sqrt' operand=101.3
-   6 | Variable name='y' initializer=#7
-   7 | BinaryExpression op='-' left=#8 right=0
-   8 | IdentifierExpression name='dozen' referent=#2
-   9 | Assignment target=#10 source=#11
-  10 | IdentifierExpression name='dozen' referent=#2
-  11 | BinaryExpression op='/' left=0 right=#12
-  12 | IdentifierExpression name='y' referent=#6
-  13 | PrintStatement argument=#14
-  14 | UnaryExpression op='abs' operand=#15
-  15 | IdentifierExpression name='dozen' referent=#2`
+   6 | Variable name='dozen'
+   7 | VariableDeclaration name='y' initializer=#8 variable=#9
+   8 | BinaryExpression op='-' left=#6 right=0
+   9 | Variable name='y'
+  10 | Assignment target=#6 source=#11
+  11 | BinaryExpression op='/' left=0 right=#9
+  12 | PrintStatement argument=#13
+  13 | UnaryExpression op='abs' operand=#6`
 
 const errorFixture = [
   ["redeclarations", "print x", /Identifier x not declared/],

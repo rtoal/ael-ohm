@@ -21,9 +21,15 @@ export class Program {
   }
 }
 
-export class Variable {
+export class VariableDeclaration {
   constructor(name, initializer) {
     Object.assign(this, { name, initializer })
+  }
+}
+
+export class Variable {
+  constructor(name) {
+    this.name = name
   }
 }
 

@@ -9,7 +9,7 @@
 //   - constant folding
 //   - some strength reductions (+0, -0, *0, *1, etc.)
 
-import { IdentifierExpression, UnaryExpression } from "./ast.js"
+import { Variable, UnaryExpression } from "./ast.js"
 
 export default function optimize(node) {
   return optimizers[node.constructor.name](node)
@@ -20,15 +20,18 @@ const optimizers = {
     p.statements = optimize(p.statements)
     return p
   },
+  VariableDeclaration(d) {
+    d.initializer = optimize(d.initializer)
+    return d
+  },
   Variable(v) {
-    v.initializer = optimize(v.initializer)
     return v
   },
   Assignment(s) {
     s.source = optimize(s.source)
     s.target = optimize(s.target)
-    if (s.target.constructor == IdentifierExpression) {
-      if (s.source.referent === s.target.referent) {
+    if (s.target.constructor == Variable) {
+      if (s.source === s.target) {
         return null
       }
     }
@@ -83,9 +86,6 @@ const optimizers = {
         return Math.sqrt(e.operand)
       }
     }
-    return e
-  },
-  IdentifierExpression(e) {
     return e
   },
   Number(e) {

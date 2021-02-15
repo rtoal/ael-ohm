@@ -25,8 +25,11 @@ export default function generate(program) {
     Program(p) {
       gen(p.statements)
     },
+    VariableDeclaration(d) {
+      output.push(`let ${gen(d.variable)} = ${gen(d.initializer)};`)
+    },
     Variable(v) {
-      output.push(`let ${targetName(v)} = ${gen(v.initializer)};`)
+      return targetName(v)
     },
     Assignment(s) {
       const source = gen(s.source)
@@ -42,9 +45,6 @@ export default function generate(program) {
     UnaryExpression(e) {
       const op = { abs: "Math.abs", sqrt: "Math.sqrt" }[e.op] ?? e.op
       return `${op}(${gen(e.operand)})`
-    },
-    IdentifierExpression(e) {
-      return targetName(e.referent)
     },
     Number(e) {
       return e

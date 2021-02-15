@@ -26,11 +26,14 @@ export default function generate(program) {
       output.push("ret i64 0")
       output.push("}")
     },
-    Variable(v) {
+    VariableDeclaration(d) {
       // Ael is such a boring language; since there are no loops or
       // conditions, Ael variables just map to the generated LLVM
-      // registers, so it's frighteningly trivial.
-      registerFor[v] = gen(v.initializer)
+      // registers, so it's frighteningly trivial. But awesome.
+      registerFor[d.variable] = gen(d.initializer)
+    },
+    Variable(v) {
+      return registerFor[v]
     },
     Assignment(s) {
       // There’s no difference between declarations and assignments here;
@@ -38,7 +41,7 @@ export default function generate(program) {
       // assignments refer to already-declared Ael variables. So
       // whatever got computed on the right hand side is what this
       // variable will reference form now on.
-      registerFor[s.target.referent] = gen(s.source)
+      registerFor[s.target] = gen(s.source)
     },
     PrintStatement(s) {
       const format =
@@ -65,9 +68,6 @@ export default function generate(program) {
       const target = allocateRegister()
       output.push(`${target} = ${source}`)
       return target
-    },
-    IdentifierExpression(e) {
-      return registerFor[e.referent]
     },
     Number(e) {
       // LLVM is very picky about its float literals!

@@ -34,7 +34,7 @@ const astBuilder = aelGrammar.createSemantics().addOperation("ast", {
     return new ast.Program(body.ast())
   },
   Statement_vardec(_let, id, _eq, initializer) {
-    return new ast.Variable(id.sourceString, initializer.ast())
+    return new ast.VariableDeclaration(id.sourceString, initializer.ast())
   },
   Statement_assign(target, _eq, source) {
     return new ast.Assignment(target.ast(), source.ast())

@@ -2,6 +2,8 @@
 //
 // Analyzes the AST by looking for semantic errors and resolving references.
 
+import { Variable } from "./ast.js"
+
 class Context {
   constructor(context) {
     // Currently, the only analysis context needed is the set of declared
@@ -26,38 +28,46 @@ class Context {
     throw new Error(`Identifier ${name} not declared`)
   }
   analyze(node) {
-    this[node.constructor.name](node)
+    return this[node.constructor.name](node)
   }
   Program(p) {
-    this.analyze(p.statements)
+    p.statements = this.analyze(p.statements)
+    return p
   }
-  Variable(v) {
-    this.analyze(v.initializer)
-    this.add(v.name, v)
+  VariableDeclaration(d) {
+    // Declarations generate brand new variable objects
+    d.initializer = this.analyze(d.initializer)
+    d.variable = new Variable(d.name)
+    this.add(d.variable.name, d.variable)
+    return d
   }
   Assignment(s) {
-    this.analyze(s.source)
-    this.analyze(s.target)
+    s.source = this.analyze(s.source)
+    s.target = this.analyze(s.target)
+    return s
   }
   PrintStatement(s) {
-    this.analyze(s.argument)
+    s.argument = this.analyze(s.argument)
+    return s
   }
   BinaryExpression(e) {
-    this.analyze(e.left)
-    this.analyze(e.right)
+    e.left = this.analyze(e.left)
+    e.right = this.analyze(e.right)
+    return e
   }
   UnaryExpression(e) {
-    this.analyze(e.operand)
+    e.operand = this.analyze(e.operand)
+    return e
   }
   IdentifierExpression(e) {
-    // Find out which actual variable is being referred to
-    e.referent = this.lookup(e.name)
+    // Id expressions get "replaced" with the variables they refer to
+    return this.lookup(e.name)
   }
   Number(e) {
-    // Nothing to analyze
+    return e
   }
   Array(a) {
-    a.forEach(entity => this.analyze(entity))
+    return a.map(item => this.analyze(item))
   }
 }
 

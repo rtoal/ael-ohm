@@ -30,8 +30,11 @@ export default function generate(program) {
       output.push("return 0;")
       output.push("}")
     },
+    VariableDeclaration(d) {
+      output.push(`double ${gen(d.variable)} = ${gen(d.initializer)};`)
+    },
     Variable(v) {
-      output.push(`double ${targetName(v)} = ${gen(v.initializer)};`)
+      return targetName(v)
     },
     Assignment(s) {
       const source = gen(s.source)
@@ -47,9 +50,6 @@ export default function generate(program) {
     UnaryExpression(e) {
       const op = { abs: "fabs" }[e.op] ?? e.op
       return `${op}(${gen(e.operand)})`
-    },
-    IdentifierExpression(e) {
-      return targetName(e.referent)
     },
     Number(e) {
       return e
