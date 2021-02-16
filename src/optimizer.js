@@ -30,7 +30,7 @@ const optimizers = {
   Assignment(s) {
     s.source = optimize(s.source)
     s.target = optimize(s.target)
-    if (s.target.constructor == Variable) {
+    if (s.target.constructor === Variable) {
       if (s.source === s.target) {
         return null
       }
@@ -46,13 +46,13 @@ const optimizers = {
     e.right = optimize(e.right)
     if (e.left.constructor === Number) {
       if (e.right.constructor === Number) {
-        if (e.op == "+") {
+        if (e.op === "+") {
           return e.left + e.right
-        } else if (e.op == "-") {
+        } else if (e.op === "-") {
           return e.left - e.right
-        } else if (e.op == "*") {
+        } else if (e.op === "*") {
           return e.left * e.right
-        } else if (e.op == "/") {
+        } else if (e.op === "/") {
           return e.left / e.right
         }
       } else if (e.left === 0 && e.op === "+") {

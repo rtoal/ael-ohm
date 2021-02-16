@@ -60,9 +60,9 @@ export default function generate(program) {
     UnaryExpression(e) {
       const operand = gen(e.operand)
       const source =
-        e.op == "-"
+        e.op === "-"
           ? `fneg double ${operand}`
-          : e.op == "abs"
+          : e.op === "abs"
           ? `call double @llvm.fabs(double ${operand})`
           : `call double @llvm.sqrt.f64(double ${operand})`
       const target = allocateRegister()
