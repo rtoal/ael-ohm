@@ -72,6 +72,6 @@ class Context {
 }
 
 export default function analyze(node) {
-  new Context().analyze(node)
-  return node
+  // Analyze in a fresh global context
+  return new Context().analyze(node)
 }
