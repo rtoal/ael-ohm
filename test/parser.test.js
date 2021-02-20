@@ -23,7 +23,17 @@ const expectedAst = `   1 | Program statements=[#2,#6,#9,#13]
   14 | UnaryExpression op='abs' operand=#15
   15 | IdentifierExpression name='dozen'`
 
-const errorFixture = [
+const syntaxChecks = [
+  ["all numeric literal forms", "print 8 * 89.123"],
+  ["complex expressions", "print 83 * ((((((((-13 / 21)))))))) + 1 - -0"],
+  ["end of program inside comment", "print 0 // yay"],
+  ["comments with no text", "print 1//\nprint 0//"],
+  ["non-Latin letters in identifiers", "let コンパイラ = 100"],
+]
+
+const syntaxErrors = [
+  ["non-letter in an identifier", "let ab😭c = 2", /Line 1, col 7:/],
+  ["malformed number", "let x= 2.", /Line 1, col 10:/],
   ["a missing right operand", "print 5 -", /Line 1, col 10:/],
   ["a non-operator", "print 7 * ((2 _ 3)", /Line 1, col 15:/],
   ["an expression starting with a )", "print )", /Line 1, col 7:/],
@@ -34,14 +44,17 @@ const errorFixture = [
 ]
 
 describe("The parser", () => {
-  it("can parse all the nodes", done => {
-    assert.deepStrictEqual(util.format(parse(source)), expectedAst)
-    done()
-  })
-  for (const [scenario, source, errorMessagePattern] of errorFixture) {
-    it(`throws on ${scenario}`, done => {
-      assert.throws(() => parse(source), errorMessagePattern)
-      done()
+  for (const [scenario, source] of syntaxChecks) {
+    it(`recognizes that ${scenario}`, () => {
+      assert(parse(source))
     })
   }
+  for (const [scenario, source, errorMessagePattern] of syntaxErrors) {
+    it(`throws on ${scenario}`, () => {
+      assert.throws(() => parse(source), errorMessagePattern)
+    })
+  }
+  it("produces the expected AST for all node types", () => {
+    assert.deepStrictEqual(util.format(parse(source)), expectedAst)
+  })
 })
