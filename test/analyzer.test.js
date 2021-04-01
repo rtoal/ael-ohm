@@ -1,41 +1,41 @@
 import assert from "assert"
-import util from "util"
 import parse from "../src/parser.js"
 import analyze from "../src/analyzer.js"
+import * as ast from "../src/ast.js"
 
-const source = `let dozen = 1 * (0 + sqrt 101.3)
-  let y = dozen - 0    // TADA 🥑
-  dozen = 0 / y
-  print abs dozen //`
+const semanticChecks = [
+  ["print declared variable", "let x = 1 print x"],
+  ["assign declared variable", "let x = 1 x = x * 5 / (3 + x)"],
+]
 
-const expectedAst = String.raw`   1 | Program statements=[#2,#7,#10,#12]
-   2 | VariableDeclaration name='dozen' initializer=#3 variable=#6
-   3 | BinaryExpression op='*' left=1 right=#4
-   4 | BinaryExpression op='+' left=0 right=#5
-   5 | UnaryExpression op='sqrt' operand=101.3
-   6 | Variable name='dozen'
-   7 | VariableDeclaration name='y' initializer=#8 variable=#9
-   8 | BinaryExpression op='-' left=#6 right=0
-   9 | Variable name='y'
-  10 | Assignment target=#6 source=#11
-  11 | BinaryExpression op='/' left=0 right=#9
-  12 | PrintStatement argument=#13
-  13 | UnaryExpression op='abs' operand=#6`
-
-const errorFixture = [
+const semanticErrors = [
   ["redeclarations", "print x", /Identifier x not declared/],
   ["non declared ids", "let x = 1\nlet x = 1", /Identifier x already declared/],
 ]
 
+const varX = new ast.Variable("x")
+const letX1 = Object.assign(new ast.VariableDeclaration("x", 1), {
+  variable: varX,
+})
+const assignX2 = new ast.Assignment(varX, 2)
+const graphChecks = [
+  ["Variable created & resolved", "let x=1 x=2", [letX1, assignX2]],
+]
+
 describe("The analyzer", () => {
-  it("can analyze all the nodes", done => {
-    assert.deepStrictEqual(util.format(analyze(parse(source))), expectedAst)
-    done()
-  })
-  for (const [scenario, source, errorMessagePattern] of errorFixture) {
-    it(`throws on ${scenario}`, done => {
+  for (const [scenario, source] of semanticChecks) {
+    it(`recognizes ${scenario}`, () => {
+      assert.ok(analyze(parse(source)))
+    })
+  }
+  for (const [scenario, source, errorMessagePattern] of semanticErrors) {
+    it(`throws on ${scenario}`, () => {
       assert.throws(() => analyze(parse(source)), errorMessagePattern)
-      done()
+    })
+  }
+  for (const [scenario, source, graph] of graphChecks) {
+    it(`properly rewrites the AST for ${scenario}`, () => {
+      assert.deepStrictEqual(analyze(parse(source)), new ast.Program(graph))
     })
   }
 })

@@ -59,9 +59,9 @@ class Context {
     e.operand = this.analyze(e.operand)
     return e
   }
-  IdentifierExpression(e) {
+  Symbol(e) {
     // Id expressions get "replaced" with the variables they refer to
-    return this.lookup(e.name)
+    return this.lookup(e.description)
   }
   Number(e) {
     return e

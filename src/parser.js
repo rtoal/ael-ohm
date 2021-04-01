@@ -55,7 +55,7 @@ const astBuilder = aelGrammar.createSemantics().addOperation("ast", {
     return expression.ast()
   },
   Var(id) {
-    return new ast.IdentifierExpression(this.sourceString)
+    return Symbol.for(this.sourceString)
   },
   num(_whole, _point, _fraction) {
     return Number(this.sourceString)

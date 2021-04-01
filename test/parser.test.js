@@ -1,27 +1,6 @@
 import assert from "assert"
-import util from "util"
 import parse from "../src/parser.js"
-
-const source = `let dozen = 1 * (0 + sqrt 101.3)
-  let y = dozen - 0    // TADA 🥑
-  dozen = 0 / y
-  print abs dozen //`
-
-const expectedAst = `   1 | Program statements=[#2,#6,#9,#13]
-   2 | VariableDeclaration name='dozen' initializer=#3
-   3 | BinaryExpression op='*' left=1 right=#4
-   4 | BinaryExpression op='+' left=0 right=#5
-   5 | UnaryExpression op='sqrt' operand=101.3
-   6 | VariableDeclaration name='y' initializer=#7
-   7 | BinaryExpression op='-' left=#8 right=0
-   8 | IdentifierExpression name='dozen'
-   9 | Assignment target=#10 source=#11
-  10 | IdentifierExpression name='dozen'
-  11 | BinaryExpression op='/' left=0 right=#12
-  12 | IdentifierExpression name='y'
-  13 | PrintStatement argument=#14
-  14 | UnaryExpression op='abs' operand=#15
-  15 | IdentifierExpression name='dozen'`
+import * as ast from "../src/ast.js"
 
 const syntaxChecks = [
   ["all numeric literal forms", "print 8 * 89.123"],
@@ -43,6 +22,31 @@ const syntaxErrors = [
   ["an expression starting with a *", "let x = * 71", /Line 1, col 9:/],
 ]
 
+const source = `let dozen = 1 * (0 + sqrt 101.3)
+  let y = dozen - 0    // TADA 🥑
+  dozen = 0 / y
+  print abs dozen //`
+
+const expectedAst = new ast.Program([
+  new ast.VariableDeclaration(
+    "dozen",
+    new ast.BinaryExpression(
+      "*",
+      1,
+      new ast.BinaryExpression("+", 0, new ast.UnaryExpression("sqrt", 101.3))
+    )
+  ),
+  new ast.VariableDeclaration(
+    "y",
+    new ast.BinaryExpression("-", Symbol.for("dozen"), 0)
+  ),
+  new ast.Assignment(
+    Symbol.for("dozen"),
+    new ast.BinaryExpression("/", 0, Symbol.for("y"))
+  ),
+  new ast.PrintStatement(new ast.UnaryExpression("abs", Symbol.for("dozen"))),
+])
+
 describe("The parser", () => {
   for (const [scenario, source] of syntaxChecks) {
     it(`recognizes that ${scenario}`, () => {
@@ -55,6 +59,6 @@ describe("The parser", () => {
     })
   }
   it("produces the expected AST for all node types", () => {
-    assert.deepStrictEqual(util.format(parse(source)), expectedAst)
+    assert.deepStrictEqual(parse(source), expectedAst)
   })
 })
