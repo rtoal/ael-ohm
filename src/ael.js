@@ -19,7 +19,7 @@ Prints to stdout according to <outputType>, which must be one of:
   llvm       the translation to LLVM
 `
 
-Program.prototype[util.inspect.custom] = function () {
+function description(node) {
   // Return a compact and pretty string representation of the node graph,
   // taking care of cycles. Written here from scratch because the built-in
   // inspect function, while nice, isn't nice enough. Defined properly in
@@ -48,14 +48,14 @@ Program.prototype[util.inspect.custom] = function () {
     }
   }
 
-  tag(this)
+  tag(node)
   return [...lines()].join("\n")
 }
 
 async function compileFromFile(filename, outputType) {
   try {
     const buffer = await fs.readFile(filename)
-    console.log(compile(buffer.toString(), outputType))
+    console.log(description(compile(buffer.toString(), outputType)))
   } catch (e) {
     console.error(`${e}`)
     process.exitCode = 1
